@@ -1,6 +1,6 @@
 # Arduino controls fans based on temperature
 
-![Arduino-controls-fans-based-on-temperature⁩.png] (Mac Fusion Drive⁩/Users⁩/John⁩/Documents⁩/Projects to GitHub⁩/Arduino-controls-fans-based-on-temperature⁩.png)
+![Design on Proteus] (Mac Fusion Drive⁩/Users⁩/John⁩/Documents⁩/Projects to GitHub⁩/Arduino-controls-fans-based-on-temperature⁩.png)
 
 This code has been created to exercise Arduino language development (focused in C++) for Arduino MCU modules.
 
