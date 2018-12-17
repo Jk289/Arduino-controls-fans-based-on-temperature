@@ -74,33 +74,34 @@
 
 //				Initial Definitions:
 
-#include <LiquidCrystal_I2C.h>
-#include "TimerOne.h"
+			#include 	<Arduino.h>
+			#include 	<LiquidCrystal_I2C.h>
+			#include 	"TimerOne.h"
 
-#define Fan_2 10
-#define Fan_1 9
+		#define 	Fan_2 			10
+		#define 	Fan_1 			 9
 
-#define Button 2
+		#define 	Button 			 2
 
-#define Potentiometer 15
-#define LM35 14
+		#define 	Potentiometer	15
+		#define 	LM35 			14
 
-#define Buzzer 13
-#define LED_Warning 12
-#define LED_Stoped 8
-#define LED_Normal 7
+		#define		Buzzer 			13
+		#define		LED_Warning 	12
+		#define		LED_Stoped 		 8
+		#define		LED_Normal 		 7
 
 //  ----------------------------------------------------------------------------------------------------
 
 //				Memory Organization:
 
-LiquidCrystal_I2C lcd(0x20, 0, 1, 2, 4, 5, 6, 7); // Confirm pins 0 to 7
+	LiquidCrystal_I2C lcd(0x20, 16, 2 ); // Confirm pins 0 to 7
 
-byte LM35_update_measure = 0;
-byte LM35_update_measure_old = 0;
+	byte LM35_update_measure = 0;
+	byte LM35_update_measure_old = 0;
 
-byte Potentiometer_update_measure = 0;
-byte Potentiometer_update_measure_old = 0;
+	byte Potentiometer_update_measure = 0;
+	byte Potentiometer_update_measure_old = 0;
 
 //  ----------------------------------------------------------------------------------------------------
 
@@ -108,9 +109,9 @@ byte Potentiometer_update_measure_old = 0;
 
 void LM35_update_measure_isr()
 {
-  LM35_update_measure = (float(analogRead(LM35)) * 5 / (1023)) / 0.01;
+	LM35_update_measure = (float(analogRead(LM35)) * 5 / (1023)) / 0.01;
 
-  Potentiometer_update_measure = (float(analogRead(Potentiometer)) * 5 / (1023) * 20);
+	Potentiometer_update_measure = (float(analogRead(Potentiometer)) * 5 / (1023) * 20);
 }
 
 //  ----------------------------------------------------------------------------------------------------
@@ -118,8 +119,7 @@ void LM35_update_measure_isr()
 //				StopFan_isr (Interrupt Sub-Routine):
 
 void StopFan_isr()
-{
-}
+{	}
 
 //  ----------------------------------------------------------------------------------------------------
 
@@ -127,24 +127,24 @@ void StopFan_isr()
 
 void ShowTemperature()
 {
-  if (LM35_update_measure != LM35_update_measure_old || Potentiometer_update_measure != Potentiometer_update_measure_old)
-  {
-    lcd.clear();
-    lcd.setCursor(0, 0);
-    lcd.print("Temp: ");
-    lcd.print(LM35_update_measure);
-    lcd.print("\xDF");
-    lcd.print("C");
+	if (LM35_update_measure != LM35_update_measure_old || Potentiometer_update_measure != Potentiometer_update_measure_old)
+	{
+		lcd.clear();
+		lcd.setCursor(0, 0);
+		lcd.print("Temp: ");
+		lcd.print(LM35_update_measure);
+		lcd.print("\xDF");
+		lcd.print("C");
 
-    lcd.setCursor(0, 1);
-    lcd.print("Pot: ");
-    lcd.print(Potentiometer_update_measure);
-    lcd.print("%");
+		lcd.setCursor(0, 1);
+		lcd.print("Pot: ");
+		lcd.print(Potentiometer_update_measure);
+		lcd.print("%");
 
-    LM35_update_measure_old = LM35_update_measure;
+		LM35_update_measure_old = LM35_update_measure;
 
-    Potentiometer_update_measure_old = Potentiometer_update_measure;
-  }
+		Potentiometer_update_measure_old = Potentiometer_update_measure;
+	}
 }
 
 //  ----------------------------------------------------------------------------------------------------
@@ -153,24 +153,24 @@ void ShowTemperature()
 
 void initializing_routine()
 {
-  for (int i = 0; i < 3; i++)
-  {
-    lcd.print("Initializing");
-    delay(250);
-    lcd.clear();
-    lcd.print("Initializing.");
-    delay(250);
-    lcd.clear();
-    lcd.print("Initializing..");
-    delay(250);
-    lcd.clear();
-    lcd.print("Initializing...");
-    delay(250);
-    lcd.clear();
-  }
+	for (int i = 0; i < 3; i++)
+	{
+		lcd.print("Initializing");
+		delay(250);
+		lcd.clear();
+		lcd.print("Initializing.");
+		delay(250);
+		lcd.clear();
+		lcd.print("Initializing..");
+		delay(250);
+		lcd.clear();
+		lcd.print("Initializing...");
+		delay(250);
+		lcd.clear();
+	}
 
-  lcd.print(" Welcome =D ");
-  delay(250);
+	lcd.print(" Welcome =D ");
+	delay(250);
 }
 
 //  ----------------------------------------------------------------------------------------------------
@@ -179,34 +179,34 @@ void initializing_routine()
 
 void setup()
 {
-  for (int i = 16; i < 20; i++)
-  {
-    pinMode(i, OUTPUT);
-  }
+	for (int i = 16; i < 20; i++)
+	{
+		pinMode(i, OUTPUT);
+	}
 
-  digitalWrite(Buzzer, HIGH);
+	digitalWrite(Buzzer, HIGH);
 
-  for (int i = 4; i < 8; i++)
-  {
-    pinMode(i, OUTPUT);
-  }
+	for (int i = 4; i < 8; i++)
+	{
+		pinMode(i, OUTPUT);
+	}
 
-  pinMode(13, OUTPUT);
-  pinMode(12, OUTPUT);
-  pinMode(10, OUTPUT);
-  pinMode(9, OUTPUT);
+	pinMode(13, OUTPUT);
+	pinMode(12, OUTPUT);
+	pinMode(10, OUTPUT);
+	pinMode(9, OUTPUT);
 
-  pinMode(15, INPUT);
-  pinMode(14, INPUT);
+	pinMode(15, INPUT);
+	pinMode(14, INPUT);
 
-  attachInterrupt(2, StopFan_isr, FALLING); //  Maybe doesn't work properly
+	attachInterrupt(2, StopFan_isr, FALLING); //  Maybe doesn't work properly
 
-  Timer1.initialize(150);
-  Timer1.attachInterrupt(LM35_update_measure_isr);
+	Timer1.initialize(150);
+	Timer1.attachInterrupt(LM35_update_measure_isr);
 
-  lcd.begin(16, 2);
+	lcd.begin(16, 2);
 
-  //	initializing_routine();						// Temporally Disable
+//	initializing_routine();						// Temporally Disable
 }
 
 //  ----------------------------------------------------------------------------------------------------
@@ -215,10 +215,19 @@ void setup()
 
 void loop()
 {
-  ShowTemperature();
+	ShowTemperature();
 }
 
 // 										END!  =)
 //  ----------------------------------------------------------------------------------------------------
 
-//					Sketches:
+/*					Sketches:
+
+      x * 0,004888
+
+
+
+
+
+
+*/

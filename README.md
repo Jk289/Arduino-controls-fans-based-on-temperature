@@ -1,8 +1,10 @@
 # Arduino controls fans based on temperature
 
+## In progress.. =)
+
 ![Design on Proteus](https://raw.githubusercontent.com/Jk289/Arduino-controls-fans-based-on-temperature/master/Arduino%20control%20fans%20with%20LM35%20temperature%20based.png)
 
-Source Code on: https://github.com/Jk289/Arduino-controls-fans-based-on-temperature/blob/master/Arduino%20controls%20fans%20based%20on%20temperature/src/Arduino%20controls%20fans%20based%20on%20temperature.cpp
+Direct link to Source Code: https://github.com/Jk289/Arduino-controls-fans-based-on-temperature/blob/master/Arduino%20controls%20fans%20based%20on%20temperature/src/Arduino%20controls%20fans%20based%20on%20temperature.cpp
 
 This code has been created to exercise Arduino language development (focused in C++) for Arduino MCU modules.
 

@@ -1,0 +1,28 @@
+{
+    "configurations": [
+        {
+            "name": "Mac",
+            "includePath": [
+                "/Applications/Arduino.app/Contents/Java/tools/**",
+                "/Applications/Arduino.app/Contents/Java/hardware/arduino/avr/**"
+            ],
+            "forcedInclude": [
+                "/Applications/Arduino.app/Contents/Java/hardware/arduino/avr/cores/arduino/Arduino.h"
+            ],
+            "intelliSenseMode": "clang-x64",
+            "browse": {
+                "path": [
+                    "/Applications/Arduino.app/Contents/Java/tools/**",
+                    "/Applications/Arduino.app/Contents/Java/hardware/arduino/avr/**"
+                ]
+            },
+            "macFrameworkPath": [
+                "/System/Library/Frameworks",
+                "/Library/Frameworks"
+            ],
+            "cStandard": "c11",
+            "cppStandard": "c++17"
+        }
+    ],
+    "version": 3
+}
