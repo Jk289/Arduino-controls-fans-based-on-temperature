@@ -14,24 +14,24 @@
 //	Code Function:
 //
 //
-//        EN:
-//        Create a program that monitors the temperature of a device and proportionally increases
-//        the speed of a FAN according to temperature, while another FAN is variable through a
-//        potentiometer, when the temperature reaches a critical level it touches a buzzer and
-//        lights an LED, and button to momentarily stop the first FAN and lights an LED indicating
-//        it is pressed. An LCD indicates the temperature and give warnings. Have an emergency
-//        cooling routine, turning on both Fans at the maximum and preventing getting out of this
-//        routine until the temperature reaches a safe level.
+//			EN:
+//			Create a program that monitors the temperature of a device and proportionally increases
+//			the speed of a FAN according to temperature, while another FAN is variable through a
+//			potentiometer, when the temperature reaches a critical level it touches a buzzer and
+//			lights an LED, and button to momentarily stop the first FAN and lights an LED indicating
+//			it is pressed. An LCD indicates the temperature and give warnings. Have an emergency
+//			cooling routine, turning on both Fans at the maximum and preventing getting out of this
+//			routine until the temperature reaches a safe level.
 //
-//				PT:
-//				Criar um programa que monitora a temperatura de um dispositivo e, proporcionalmente
-//				aumenta a velocidade de um FAN conforme a temperatura, enquanto outro FAN é variável
-//				através de um potenciômetro, quando a temperatura chegar a um nível crítico toca um
-//				buzzer e acende um LED, e um botão para parar momentaneamente o primeiro FAN e acende
-//				um LED indicando que está pressionado.
-//				Um LCD indicar a temperatura e dar avisos.
-//				Ter uma rotina de resfriamento de emergencia, ligando os dois Fans no máximo e
-//				impedindo sair dessa rotina até que a temperatura alcance um nível seguro.
+//			PT:
+//			Criar um programa que monitora a temperatura de um dispositivo e, proporcionalmente
+//			aumenta a velocidade de um FAN conforme a temperatura, enquanto outro FAN é variável
+//			através de um potenciômetro, quando a temperatura chegar a um nível crítico toca um
+//			buzzer e acende um LED, e um botão para parar momentaneamente o primeiro FAN e acende
+//			um LED indicando que está pressionado.
+//			Um LCD indicar a temperatura e dar avisos.
+//			Ter uma rotina de resfriamento de emergencia, ligando os dois Fans no máximo e
+//			impedindo sair dessa rotina até que a temperatura alcance um nível seguro.
 //
 //					Itens:
 //					—	2x Fans;
@@ -66,7 +66,7 @@
 //				-      Library:		LiquidCrystal_I2C / TimerOne
 //				-  Compilation:		Arduino IDE
 //				-	 Simulator:		Proteus 8.4
-//				-  Boot-loader: 	Arduino
+//				-  Boot-loader: 	Arduino Uno
 //
 
 //										CODING:
@@ -95,31 +95,66 @@
 
 //				Memory Organization:
 
-	LiquidCrystal_I2C lcd(0x20, 16, 2 ); // Confirm pins 0 to 7
+	LiquidCrystal_I2C lcd( 0x20, 16, 2 ); 
 
-	byte LM35_update_measure = 0;
-	byte LM35_update_measure_old = 0;
+	byte LM35_update_measure = 0 ;
+	byte LM35_update_measure_old = 0 ;
 
-	byte Potentiometer_update_measure = 0;
-	byte Potentiometer_update_measure_old = 0;
+	int	 LM35_update_measure_for_PWM = 0 ;
+
+	int  Potentiometer_update_measure = 0 ;
+	int  Potentiometer_update_measure_old = 0 ;
+
+	int  Potentiometer_update_measure_for_PWM = 0 ;
+
+	bool Normal_State =  true ;
+	bool Stoped_State = false ;
 
 //  ----------------------------------------------------------------------------------------------------
 
-//				LM35_update_measure_isr (TimerOne Interrupt Sub-Routine):
+//				Update_measures_isr (TimerOne Interrupt Sub-Routine):
 
-void LM35_update_measure_isr()
+void Update_measures_isr()
 {
 	LM35_update_measure = (float(analogRead(LM35)) * 5 / (1023)) / 0.01;
+	LM35_update_measure_for_PWM = map( LM35_update_measure, 45 , 75 , 338 , 1023 );
+	if( LM35_update_measure_for_PWM < 338 )
+	{
+		LM35_update_measure_for_PWM = 338 ;
+	}
 
 	Potentiometer_update_measure = (float(analogRead(Potentiometer)) * 5 / (1023) * 20);
+	Potentiometer_update_measure_for_PWM = (float(analogRead(Potentiometer)) * 5 / (1023) * 204.6);
+
+	if( LM35_update_measure > 75 )
+	{
+		Normal_State = false ;
+	}
+	if( LM35_update_measure <= 75 )
+	{
+		Normal_State = true ;
+	}
 }
 
 //  ----------------------------------------------------------------------------------------------------
 
 //				StopFan_isr (Interrupt Sub-Routine):
-
-void StopFan_isr()
-{	}
+/*
+void StopFan_isr() 									// Maybe doesn't work properly
+{
+	Timer1.setPwmDuty( Fan_2, 0 ); 					
+	
+	if( digitalRead( Button ) != HIGH )
+	{
+		Stoped_State = true ;
+		digitalWrite( LED_Stoped, HIGH );
+	}
+	else
+	{
+		Stoped_State = false ;
+		digitalWrite( LED_Stoped, LOW );
+	}
+}	*/
 
 //  ----------------------------------------------------------------------------------------------------
 
@@ -153,7 +188,7 @@ void ShowTemperature()
 
 void initializing_routine()
 {
-	for (int i = 0; i < 3; i++)
+	for ( int i = 0 ; i < 3 ; i++ )
 	{
 		lcd.print("Initializing");
 		delay(250);
@@ -175,36 +210,57 @@ void initializing_routine()
 
 //  ----------------------------------------------------------------------------------------------------
 
+//				Warning_sr Sub-Routine:
+
+void Warning_sr()
+{
+	digitalWrite( LED_Normal, 	LOW );
+	digitalWrite( LED_Warning, HIGH );
+	digitalWrite( Buzzer, 		LOW );
+
+	Timer1.setPwmDuty( Fan_2, HIGH );
+	Timer1.setPwmDuty( Fan_1, HIGH );
+
+	if( LM35_update_measure <= 75 )				// doesn't work
+	{
+		Normal_State = true ;
+	
+		digitalWrite( LED_Normal, HIGH );
+		digitalWrite( LED_Warning, LOW );
+		digitalWrite( Buzzer, 	  HIGH );
+	}
+}
+
+//  ----------------------------------------------------------------------------------------------------
+
 //				Start Setup:
 
 void setup()
 {
-	for (int i = 16; i < 20; i++)
-	{
-		pinMode(i, OUTPUT);
-	}
+	pinMode( Buzzer, OUTPUT );
+	digitalWrite( Buzzer, HIGH );
 
-	digitalWrite(Buzzer, HIGH);
+	pinMode( LED_Normal, OUTPUT );
+	pinMode( LED_Warning, OUTPUT );
+	pinMode( LED_Stoped, OUTPUT );
 
-	for (int i = 4; i < 8; i++)
-	{
-		pinMode(i, OUTPUT);
-	}
+	pinMode( Fan_2, OUTPUT );
+	pinMode( Fan_1, OUTPUT );
 
-	pinMode(13, OUTPUT);
-	pinMode(12, OUTPUT);
-	pinMode(10, OUTPUT);
-	pinMode(9, OUTPUT);
+	pinMode( Potentiometer, INPUT );
+	pinMode( LM35, INPUT );
 
-	pinMode(15, INPUT);
-	pinMode(14, INPUT);
+	pinMode( Button, INPUT );
 
-	attachInterrupt(2, StopFan_isr, FALLING); //  Maybe doesn't work properly
+//	attachInterrupt( Button, StopFan_isr, LOW ); //  Maybe doesn't work properly
 
 	Timer1.initialize(150);
-	Timer1.attachInterrupt(LM35_update_measure_isr);
+	Timer1.attachInterrupt( Update_measures_isr );
 
-	lcd.begin(16, 2);
+	lcd.begin( 16 , 2 );
+
+	Timer1.pwm( Fan_2 , 512 );
+	Timer1.pwm( Fan_1 , 512 );
 
 //	initializing_routine();						// Temporally Disable
 }
@@ -216,6 +272,14 @@ void setup()
 void loop()
 {
 	ShowTemperature();
+
+	Timer1.setPwmDuty( Fan_2, Potentiometer_update_measure_for_PWM );
+	Timer1.setPwmDuty( Fan_1, LM35_update_measure_for_PWM );
+
+	while( LM35_update_measure > 75 )
+	{
+		Warning_sr();
+	}
 }
 
 // 										END!  =)
@@ -223,7 +287,7 @@ void loop()
 
 /*					Sketches:
 
-      x * 0,004888
+
 
 
 
