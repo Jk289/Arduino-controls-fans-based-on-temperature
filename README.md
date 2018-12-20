@@ -17,6 +17,8 @@ More and better description coming soon =)
 * Direct link to Source Code:
 > https://github.com/Jk289/Arduino-controls-fans-based-on-temperature/blob/master/Arduino%20controls%20fans%20based%20on%20temperature/src/Arduino%20controls%20fans%20based%20on%20temperature.cpp
 
+* Direct link to Proteus files for simulation:
+> https://github.com/Jk289/Arduino-controls-fans-based-on-temperature/blob/master/Proteus%20Simulation/Arduino%20control%20fans%20with%20LM35%20temperature%20based.pdsprj
 
 ## To Implement:
 * LEDs function work properly
