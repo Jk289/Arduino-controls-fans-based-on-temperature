@@ -2,7 +2,7 @@
 
 ### 🔜 In progress.. =)
 
-![Design on Proteus](https://raw.githubusercontent.com/Jk289/Arduino-controls-fans-based-on-temperature/master/Arduino%20control%20fans%20with%20LM35%20temperature%20based.png)
+![Design on Proteus ](https://raw.githubusercontent.com/Jk289/Arduino-controls-fans-based-on-temperature/master/Arduino%20control%20fans%20with%20LM35%20temperature%20based.png)
 
 ## Description:
 
