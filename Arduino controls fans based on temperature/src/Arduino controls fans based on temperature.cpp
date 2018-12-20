@@ -126,6 +126,9 @@ void Update_measures_isr()
 	Potentiometer_update_measure = (float(analogRead(Potentiometer)) * 5 / (1023) * 20);
 	Potentiometer_update_measure_for_PWM = (float(analogRead(Potentiometer)) * 5 / (1023) * 204.6);
 
+	Timer1.setPwmDuty(Fan_2, Potentiometer_update_measure_for_PWM);
+	Timer1.setPwmDuty(Fan_1, LM35_update_measure_for_PWM);
+
 	if( LM35_update_measure > 75 )
 	{
 		Normal_State = false ;
@@ -272,9 +275,6 @@ void setup()
 void loop()
 {
 	ShowTemperature();
-
-	Timer1.setPwmDuty( Fan_2, Potentiometer_update_measure_for_PWM );
-	Timer1.setPwmDuty( Fan_1, LM35_update_measure_for_PWM );
 
 	while( LM35_update_measure > 75 )
 	{
